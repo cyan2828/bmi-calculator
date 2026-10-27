@@ -371,6 +371,109 @@
     line-height: 1.9;
   }
 
+  /* ---------- AI 健康分析 ---------- */
+  .habit-tip { font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 10px; line-height: 1.6; }
+  .habits { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .habit {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .habit.on {
+    background: linear-gradient(135deg, rgba(127,90,240,0.5), rgba(239,69,101,0.35));
+    color: #fff;
+    border-color: rgba(201, 134, 215, 0.65);
+  }
+  .ai-extra {
+    width: 100%;
+    min-height: 62px;
+    resize: none;
+    padding: 12px 14px;
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .ai-extra::placeholder { color: rgba(255,255,255,0.3); }
+  .ai-extra:focus { border-color: #0ea5e9; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.18); }
+  .btn-ai {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 55%, #7f5af0 100%);
+    box-shadow: 0 14px 34px rgba(14, 165, 233, 0.35);
+    transition: transform 0.15s, opacity 0.2s;
+    margin-top: 14px;
+  }
+  .btn-ai:active { transform: scale(0.97); }
+  .btn-ai:disabled { opacity: 0.55; cursor: default; }
+  .btn-ai svg { width: 19px; height: 19px; }
+  .ai-loading {
+    text-align: center;
+    padding: 22px 0 8px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13.5px;
+  }
+  .ai-loading .bar {
+    width: 120px; height: 4px;
+    margin: 0 auto 12px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+    position: relative;
+  }
+  .ai-loading .bar::after {
+    content: '';
+    position: absolute; left: -40%; top: 0; bottom: 0; width: 40%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #0ea5e9, #a78bfa);
+    animation: slideBar 1.1s ease-in-out infinite;
+  }
+  @keyframes slideBar { to { left: 100%; } }
+  .ai-report { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .ai-sec {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 13px 15px;
+    text-align: left;
+    animation: popIn 0.4s ease;
+  }
+  .ai-sec .h { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .ai-sec .b { font-size: 13.5px; line-height: 1.85; color: rgba(255,255,255,0.8); white-space: pre-wrap; word-break: break-word; }
+  .ai-error {
+    margin-top: 14px;
+    color: #ff8fa3;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.7;
+  }
+  .ai-note {
+    margin-top: 12px;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.35);
+    text-align: center;
+    line-height: 1.6;
+  }
+
   /* ---------- 分享区 ---------- */
   .share-area { margin-top: 20px; }
   .btn-share {
@@ -518,6 +621,24 @@
         <button class="clear-btn" id="clearBtn" onclick="clearAll()">清空</button>
       </div>
       <div class="record-list" id="recordList"></div>
+    </div>
+
+    <!-- AI 健康分析 -->
+    <div class="glass-card section">
+      <div class="section-head">
+        <div class="section-title">AI 健康分析</div>
+      </div>
+      <p class="habit-tip">选择你的生活习惯（自愿填写，选了 AI 建议会更贴合你；也可以什么都不选）</p>
+      <div class="habits" id="habits"></div>
+      <textarea class="ai-extra" id="aiExtra" placeholder="其他想告诉 AI 的情况（可选），如：最近在控制晚餐主食"></textarea>
+      <button class="btn-ai" id="aiBtn" onclick="analyzeTrend()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l1.9 5.7L20 10l-5.4 2.6L12 19l-2.6-6.4L4 10l6.1-1.3L12 3z"/>
+        </svg>
+        AI 分析我的健康趋势
+      </button>
+      <div id="aiResult"></div>
+      <p class="ai-note">分析由大模型生成，仅供参考，不构成医疗建议<br>仅提交记录数字与所选习惯，点击即表示同意发送</p>
     </div>
 
     <div class="share-area">
@@ -823,6 +944,129 @@ function clearAll() {
 function renderHistory() {
   renderChart();
   renderList();
+}
+
+/* ---------- AI 健康分析 ---------- */
+var AI_API = 'https://api.siliconflow.cn/v1/chat/completions';
+var AI_KEY = 'sk-paupjpvqcvrhbanjtgpisejfewnydlmxiwuudkxsevthtkff';
+var AI_MODEL = 'deepseek-ai/DeepSeek-V4.1-Flash';
+var HABITS = ['三餐规律', '常熬夜', '久坐少动', '每周运动 3 次以上', '嗜好高油高糖', '饮水充足', '吸烟', '经常饮酒'];
+
+(function initHabits() {
+  var box = document.getElementById('habits');
+  box.innerHTML = HABITS.map(function(h) {
+    return '<span class="habit">' + h + '</span>';
+  }).join('');
+  box.addEventListener('click', function(e) {
+    if (e.target.classList.contains('habit')) e.target.classList.toggle('on');
+  });
+})();
+
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+async function analyzeTrend() {
+  var list = loadRecords();
+  if (list.length === 0) {
+    showToast('请先「记录并计算」一条数据');
+    return;
+  }
+
+  var btn = document.getElementById('aiBtn');
+  var resultBox = document.getElementById('aiResult');
+  btn.disabled = true;
+  btn.textContent = 'AI 分析中…';
+  resultBox.innerHTML = '<div class="ai-loading"><div class="bar"></div>正在读取你的 ' + list.length +
+    ' 条记录并生成报告，请稍候…</div>';
+
+  // 组装数据：全部记录（最多取最近 60 条）+ 自愿填写的生活习惯
+  var sliced = list.slice(-60);
+  var habits = Array.prototype.map.call(
+    document.querySelectorAll('#habits .habit.on'),
+    function(el) { return el.textContent; }
+  );
+  var extra = document.getElementById('aiExtra').value.trim();
+
+  var payload = {
+    recordCount: list.length,
+    records: sliced.map(function(r) {
+      return { 日期: fmtTime(r.t), 身高cm: r.h, 体重kg: r.w, BMI: r.b };
+    }),
+    currentBMI: sliced[sliced.length - 1].b,
+    currentCategory: categoryOf(sliced[sliced.length - 1].b).label,
+    生活习惯: habits,
+    其他补充: extra || '（未填写）'
+  };
+
+  var systemPrompt =
+    '你是一位专业的健康管理分析师。用户会提供其 BMI 追踪记录（JSON）及自愿填写的生活习惯。' +
+    '请用中文生成简明的健康分析报告，严格按以下三段结构输出，每段第一行以指定 emoji 标题开头，标题独立成行：\n' +
+    '📈 趋势总结：用 1-2 句话客观总结体重/BMI 的长短期变化规律，引用记录中的具体数字与日期跨度。\n' +
+    '⚠️ 值得关注的变化：指出积极迹象（如平稳下降、回到健康区间）或潜在风险（如短期大幅波动、体重过低、趋势恶化）；数据不足时如实说明。\n' +
+    '💡 日常健康管理建议：结合生活习惯与当前 BMI 分类，给出 2-3 条具体可操作的饮食/运动建议，每条以「- 」开头独立一行。\n' +
+    '要求：友善客观；不诊断疾病；不编造数据中不存在的信息；全文不超过 250 字。';
+
+  try {
+    var res = await fetch(AI_API, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + AI_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: AI_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: '我的记录数据：\n' + JSON.stringify(payload) }
+        ],
+        temperature: 0.6,
+        max_tokens: 900
+      })
+    });
+    if (!res.ok) throw new Error('接口返回 ' + res.status);
+    var data = await res.json();
+    var text = (data.choices && data.choices[0] && data.choices[0].message &&
+      data.choices[0].message.content || '').trim();
+    if (!text) throw new Error('模型未返回内容');
+    renderAIReport(text);
+  } catch (err) {
+    resultBox.innerHTML = '<div class="ai-error">分析失败：' + escHtml(err.message) +
+      '<br>请检查网络后重试（提交的数据不会保存到任何服务器）</div>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.7L20 10l-5.4 2.6L12 19l-2.6-6.4L4 10l6.1-1.3L12 3z"/></svg> AI 分析我的健康趋势';
+  }
+}
+
+// 解析模型输出：按 📈 / ⚠️ / 💡 标题行切分成三个板块
+function renderAIReport(text) {
+  var heads = ['📈', '⚠️', '💡'];
+  var secs = [];
+  var cur = null;
+  text.split('\n').forEach(function(line) {
+    var t = line.trim();
+    if (!t) return;
+    var matched = -1;
+    for (var i = 0; i < heads.length; i++) {
+      if (t.indexOf(heads[i]) === 0) { matched = i; break; }
+    }
+    if (matched !== -1) {
+      cur = { h: t, b: '' };
+      secs.push(cur);
+    } else if (cur) {
+      cur.b += (cur.b ? '\n' : '') + t;
+    }
+  });
+  if (secs.length === 0) secs = [{ h: '📊 分析报告', b: text }];
+
+  document.getElementById('aiResult').innerHTML =
+    '<div class="ai-report">' +
+    secs.map(function(s) {
+      return '<div class="ai-sec"><div class="h">' + escHtml(s.h) + '</div><div class="b">' +
+        escHtml(s.b) + '</div></div>';
+    }).join('') +
+    '</div>';
 }
 
 /* ---------- 分享 ---------- */
