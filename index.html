@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#17153a">
-<title>BMI 计算器</title>
+<title>BMI 指标追踪器</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -27,7 +27,6 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* 手机容器：桌面端居中显示手机宽度，移动端全屏 */
   .phone {
     width: 100%;
     max-width: 430px;
@@ -40,7 +39,6 @@
     box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
   }
 
-  /* 装饰光斑 */
   .blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.4; pointer-events: none; }
   .blob-1 { width: 260px; height: 260px; background: #7f5af0; top: -70px; left: -60px; animation: float1 9s ease-in-out infinite; }
   .blob-2 { width: 240px; height: 240px; background: #2cb67d; bottom: -60px; right: -50px; animation: float2 11s ease-in-out infinite; }
@@ -72,7 +70,7 @@
     font-size: 17px;
     font-weight: 600;
     letter-spacing: 1px;
-    margin-right: 84px; /* 与胶囊按钮平衡居中 */
+    margin-right: 84px;
   }
   .capsule {
     position: absolute;
@@ -105,23 +103,23 @@
   /* ---------- 主体 ---------- */
   main {
     flex: 1;
-    padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    padding: 20px 18px calc(env(safe-area-inset-bottom, 0px) + 24px);
     position: relative;
     z-index: 1;
   }
 
-  .hero { text-align: center; margin-bottom: 24px; }
+  .hero { text-align: center; margin-bottom: 20px; }
   .icon-badge {
-    width: 60px; height: 60px;
-    margin: 0 auto 14px;
-    border-radius: 19px;
+    width: 56px; height: 56px;
+    margin: 0 auto 12px;
+    border-radius: 18px;
     background: linear-gradient(135deg, #7f5af0, #ef4565);
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 12px 30px rgba(127, 90, 240, 0.5);
   }
-  .icon-badge svg { width: 30px; height: 30px; }
-  .hero h1 { font-size: 24px; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; }
-  .hero p { font-size: 13.5px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+  .icon-badge svg { width: 28px; height: 28px; }
+  .hero h1 { font-size: 23px; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; }
+  .hero p { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
 
   .glass-card {
     background: rgba(255, 255, 255, 0.08);
@@ -129,10 +127,19 @@
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 22px;
-    padding: 24px 20px;
+    padding: 22px 18px;
   }
+  .section { margin-top: 18px; }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .section-title { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+  #recCount { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 400; margin-left: 6px; letter-spacing: 0; }
 
-  .form-group { margin-bottom: 16px; }
+  .form-group { margin-bottom: 14px; }
   label {
     display: flex; align-items: center; gap: 6px;
     font-size: 14px;
@@ -144,7 +151,7 @@
   .input-wrap { position: relative; }
   input {
     width: 100%;
-    height: 54px;
+    height: 52px;
     padding: 0 56px 0 18px;
     border: 1.5px solid rgba(255,255,255,0.14);
     border-radius: 15px;
@@ -184,7 +191,7 @@
     background-size: 200% 100%;
     box-shadow: 0 14px 34px rgba(127, 90, 240, 0.45);
     transition: transform 0.15s, background-position 0.4s;
-    margin-top: 6px;
+    margin-top: 4px;
   }
   button.btn-primary:active { transform: scale(0.97); }
 
@@ -196,9 +203,9 @@
     display: none;
   }
 
-  /* ---------- 结果区 ---------- */
+  /* ---------- 结果仪表盘 ---------- */
   .result {
-    margin-top: 24px;
+    margin-top: 22px;
     display: none;
     text-align: center;
     animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -209,14 +216,14 @@
   }
 
   .gauge-wrap {
-    width: 272px;
+    width: 268px;
     margin: 0 auto;
     padding: 10px 14px 6px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 22px;
   }
-  .gauge-inner { position: relative; width: 244px; margin: 0 auto; }
+  .gauge-inner { position: relative; width: 240px; margin: 0 auto; }
   .gauge-track, .gauge-arc { fill: none; stroke-linecap: round; }
   .gauge-track { stroke: rgba(255,255,255,0.09); stroke-width: 14; }
   .gauge-arc {
@@ -224,8 +231,8 @@
     transition: stroke-dashoffset 1s cubic-bezier(0.25, 1, 0.35, 1), stroke 0.6s;
   }
   .needle {
-    position: absolute; left: 50%; bottom: 20px;
-    width: 4px; height: 74px;
+    position: absolute; left: 50%; bottom: 19px;
+    width: 4px; height: 72px;
     background: linear-gradient(to top, rgba(255,255,255,0.85), rgba(255,255,255,0.2));
     border-radius: 4px;
     transform-origin: bottom center;
@@ -243,17 +250,17 @@
   }
   .gauge-value {
     position: absolute; left: 0; right: 0; bottom: -3px;
-    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    font-size: 34px; font-weight: 800; letter-spacing: -1px;
     text-shadow: 0 4px 24px rgba(0,0,0,0.35);
   }
-  .gauge-value small { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.45); margin-left: 2px; }
+  .gauge-value small { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.45); margin-left: 2px; }
 
   .bmi-label {
     display: inline-block;
-    margin-top: 22px;
-    padding: 8px 26px;
+    margin-top: 20px;
+    padding: 7px 24px;
     border-radius: 999px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 3px;
     box-shadow: 0 10px 26px rgba(0,0,0,0.35);
@@ -263,34 +270,115 @@
 
   .scale-labels {
     display: flex; justify-content: space-between;
-    font-size: 11.5px;
+    font-size: 11px;
     color: rgba(255,255,255,0.45);
-    margin-top: 16px;
-    padding: 0 4px;
+    margin-top: 14px;
+    padding: 0 2px;
   }
   .scale-labels span.active { color: #fff; font-weight: 700; }
 
   .advice {
-    margin-top: 16px;
-    font-size: 13.5px;
+    margin-top: 14px;
+    font-size: 13px;
     color: rgba(255,255,255,0.72);
     line-height: 1.75;
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 15px;
-    padding: 13px 15px;
+    padding: 12px 14px;
     text-align: left;
   }
   .advice strong { color: #fff; }
 
+  /* ---------- 曲线图 ---------- */
+  .tabs {
+    display: flex;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .tab {
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.55);
+    padding: 7px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s;
+  }
+  .tab.active { background: linear-gradient(135deg, #7f5af0, #c86dd7); color: #fff; }
+
+  .chart-wrap svg { width: 100%; height: auto; display: block; }
+  .chart-empty {
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    padding: 34px 0;
+    line-height: 1.9;
+  }
+
+  /* ---------- 记录列表 ---------- */
+  .clear-btn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.6);
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s;
+  }
+  .clear-btn.armed {
+    background: rgba(239, 69, 101, 0.22);
+    color: #ff8fa3;
+    border-color: rgba(239, 69, 101, 0.45);
+  }
+
+  .record-list { max-height: 330px; overflow-y: auto; }
+  .rec-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .rec-item:last-child { border-bottom: none; }
+  .rec-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 8px currentColor; }
+  .rec-main { flex: 1; min-width: 0; }
+  .rec-line1 { font-size: 14.5px; font-weight: 600; }
+  .rec-line1 .cat { font-size: 12px; font-weight: 600; margin-left: 8px; }
+  .rec-line2 { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+  .rec-del {
+    width: 30px; height: 30px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+  }
+  .rec-del:active { background: rgba(239,69,101,0.25); color: #ff8fa3; }
+  .empty {
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    padding: 26px 0;
+    line-height: 1.9;
+  }
+
   /* ---------- 分享区 ---------- */
-  .share-area { margin-top: 22px; }
+  .share-area { margin-top: 20px; }
   .btn-share {
     width: 100%;
-    height: 54px;
+    height: 52px;
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 15px;
-    font-size: 16px;
+    font-size: 15.5px;
     font-weight: 600;
     letter-spacing: 1px;
     color: #fff;
@@ -301,7 +389,7 @@
     transition: transform 0.15s, background 0.25s;
   }
   .btn-share:active { transform: scale(0.97); background: rgba(255,255,255,0.16); }
-  .btn-share svg { width: 19px; height: 19px; }
+  .btn-share svg { width: 18px; height: 18px; }
   .share-tip {
     margin-top: 12px;
     text-align: center;
@@ -326,6 +414,9 @@
     transition: opacity 0.3s, transform 0.3s;
     z-index: 99;
     white-space: nowrap;
+    max-width: 86vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
@@ -337,11 +428,10 @@
 
 <div class="phone">
 
-  <!-- 仿小程序导航栏 -->
   <nav class="navbar">
     <div class="nav-back">‹</div>
-    <div class="nav-title">BMI 计算器</div>
-    <div class="capsule" onclick="showToast('这是仿小程序的 H5 页面')">
+    <div class="nav-title">BMI 指标追踪器</div>
+    <div class="capsule" onclick="showToast('数据仅保存在本机浏览器中')">
       <span>•••</span><i></i><span class="dot-target"></span>
     </div>
   </nav>
@@ -350,13 +440,12 @@
     <div class="hero">
       <div class="icon-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M12 12l4-3"/>
-          <path d="M12 7v1M17 12h-1M12 17v-1M7 12h1"/>
+          <path d="M3 17l5-6 4 4 6-8 3 4"/>
+          <circle cx="8" cy="11" r="1.4" fill="#fff" stroke="none"/>
         </svg>
       </div>
-      <h1>BMI 计算器</h1>
-      <p>输入身高体重 · 即时评估健康状态</p>
+      <h1>BMI 指标追踪器</h1>
+      <p>记录每一次身体数据 · 见证变化趋势</p>
     </div>
 
     <div class="glass-card">
@@ -382,13 +471,13 @@
         </div>
       </div>
 
-      <button class="btn-primary" onclick="calculate()">立即计算</button>
+      <button class="btn-primary" onclick="calculate()">记录并计算</button>
       <p class="error" id="error">请输入有效的身高和体重（身高 50-250cm，体重 10-300kg）</p>
 
       <div class="result" id="result">
         <div class="gauge-wrap">
           <div class="gauge-inner">
-            <svg viewBox="0 0 200 110" width="244" height="134">
+            <svg viewBox="0 0 200 110" width="240" height="132">
               <path class="gauge-track" d="M 18 100 A 82 82 0 0 1 182 100"/>
               <path class="gauge-arc" id="arc" d="M 18 100 A 82 82 0 0 1 182 100"/>
             </svg>
@@ -410,6 +499,27 @@
       </div>
     </div>
 
+    <!-- 历史曲线 -->
+    <div class="glass-card section">
+      <div class="section-head">
+        <div class="section-title">历史曲线</div>
+        <div class="tabs">
+          <button class="tab active" id="tabBmi" onclick="switchMode('bmi')">BMI</button>
+          <button class="tab" id="tabWeight" onclick="switchMode('weight')">体重</button>
+        </div>
+      </div>
+      <div class="chart-wrap" id="chartWrap"></div>
+    </div>
+
+    <!-- 历史记录 -->
+    <div class="glass-card section">
+      <div class="section-head">
+        <div class="section-title">历史记录<span id="recCount"></span></div>
+        <button class="clear-btn" id="clearBtn" onclick="clearAll()">清空</button>
+      </div>
+      <div class="record-list" id="recordList"></div>
+    </div>
+
     <div class="share-area">
       <button class="btn-share" onclick="shareResult()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -418,7 +528,7 @@
         </svg>
         分享给好友
       </button>
-      <p class="share-tip">通过微信 / 浏览器菜单发送本页给朋友<br>也可以截图分享你的 BMI 报告</p>
+      <p class="share-tip">数据仅保存在本机浏览器，不会上传服务器<br>通过微信 / 浏览器菜单把本页发送给朋友</p>
     </div>
   </main>
 </div>
@@ -430,18 +540,45 @@ var ARC_LENGTH = Math.PI * 82;
 document.getElementById('arc').style.strokeDasharray = ARC_LENGTH;
 document.getElementById('arc').style.strokeDashoffset = ARC_LENGTH;
 
-var lastResult = null; // 记录最近一次计算结果，用于分享文案
+var STORE_KEY = 'bmi_tracker_records_v1';
+var chartMode = 'bmi'; // 'bmi' | 'weight'
 
-// BMI → 指针角度与弧长（14 → 32 线性映射，封顶）
-function bmiToAngle(bmi) {
-  var c = Math.max(14, Math.min(32, bmi));
-  return -90 + (c - 14) / 18 * 180;
+/* ---------- 存储 ---------- */
+function loadRecords() {
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    var list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch (e) { return []; }
 }
-function bmiToArc(bmi) {
-  var c = Math.max(14, Math.min(32, bmi));
-  return ARC_LENGTH * (1 - (c - 14) / 18);
+function saveStore(list) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(list));
 }
 
+// 保存一次测量（与上一条完全相同的数据只刷新时间，避免重复堆积）
+function addRecord(h, w, bmi) {
+  var list = loadRecords();
+  var last = list[list.length - 1];
+  if (last && last.h === h && last.w === w) {
+    last.t = Date.now();
+    last.b = bmi;
+  } else {
+    list.push({ t: Date.now(), h: h, w: w, b: bmi });
+  }
+  saveStore(list);
+  renderHistory();
+}
+
+/* ---------- 分类 ---------- */
+function categoryOf(bmi) {
+  // 中国成人 BMI 标准（WS/T 428-2013）
+  if (bmi < 18.5) return { label: '偏瘦', color: '#38bdf8', tagId: 'tag0' };
+  if (bmi < 24)   return { label: '正常', color: '#34d399', tagId: 'tag1' };
+  if (bmi < 28)   return { label: '超重', color: '#fbbf24', tagId: 'tag2' };
+  return { label: '肥胖', color: '#f87171', tagId: 'tag3' };
+}
+
+/* ---------- 计算并保存 ---------- */
 function calculate() {
   var height = parseFloat(document.getElementById('height').value);
   var weight = parseFloat(document.getElementById('weight').value);
@@ -457,65 +594,252 @@ function calculate() {
 
   var bmi = weight / Math.pow(height / 100, 2);
   var bmiRounded = Math.round(bmi * 10) / 10;
-
-  // 分类与配色（中国成人 BMI 标准 WS/T 428-2013）
-  var label, color, tagId, advice;
-  if (bmi < 18.5) {
-    label = '偏 瘦'; color = '#38bdf8'; tagId = 'tag0';
-    advice = '体重偏轻，建议<strong>均衡饮食、适当增加优质蛋白摄入</strong>，并配合力量训练增强体质。';
-  } else if (bmi < 24) {
-    label = '正 常'; color = '#34d399'; tagId = 'tag1';
-    advice = '体重在健康范围内，请<strong>继续保持良好的饮食和运动习惯</strong>。';
-  } else if (bmi < 28) {
-    label = '超 重'; color = '#fbbf24'; tagId = 'tag2';
-    advice = '体重已超出健康范围，建议<strong>控制饮食总热量，增加有氧运动</strong>，如快走、慢跑、游泳等。';
-  } else {
-    label = '肥 胖'; color = '#f87171'; tagId = 'tag3';
-    advice = '属于肥胖范围，健康风险较高，建议<strong>制定科学的减重计划</strong>，必要时咨询医生或营养师。';
-  }
+  var cat = categoryOf(bmi);
 
   var arc = document.getElementById('arc');
-  arc.style.stroke = color + 'b3';
+  arc.style.stroke = cat.color + 'b3';
   arc.style.strokeDashoffset = bmiToArc(bmi);
   document.getElementById('needle').style.transform =
     'translateX(-50%) rotate(' + bmiToAngle(bmi) + 'deg)';
   document.getElementById('bmiValue').textContent = bmiRounded.toFixed(1);
-  document.getElementById('bmiValue').style.color = color;
+  document.getElementById('bmiValue').style.color = cat.color;
 
   var bmiLabelEl = document.getElementById('bmiLabel');
-  bmiLabelEl.textContent = label;
-  bmiLabelEl.style.background = 'linear-gradient(135deg, ' + color + 'cc, ' + color + '88)';
-  bmiLabelEl.style.boxShadow = '0 10px 30px ' + color + '55';
+  bmiLabelEl.textContent = cat.label.split('').join(' ') + ' ';
+  bmiLabelEl.style.background = 'linear-gradient(135deg, ' + cat.color + 'cc, ' + cat.color + '88)';
+  bmiLabelEl.style.boxShadow = '0 10px 30px ' + cat.color + '55';
 
   for (var i = 0; i < 4; i++) {
-    document.getElementById('tag' + i).classList.toggle('active', ('tag' + i) === tagId);
+    document.getElementById('tag' + i).classList.toggle('active', ('tag' + i) === cat.tagId);
   }
 
-  document.getElementById('advice').innerHTML = advice;
+  var adviceMap = {
+    '偏瘦': '体重偏轻，建议<strong>均衡饮食、适当增加优质蛋白摄入</strong>，并配合力量训练增强体质。',
+    '正常': '体重在健康范围内，请<strong>继续保持良好的饮食和运动习惯</strong>。',
+    '超重': '体重已超出健康范围，建议<strong>控制饮食总热量，增加有氧运动</strong>，如快走、慢跑、游泳等。',
+    '肥胖': '属于肥胖范围，健康风险较高，建议<strong>制定科学的减重计划</strong>，必要时咨询医生或营养师。'
+  };
+  document.getElementById('advice').innerHTML = adviceMap[cat.label];
   resultEl.style.display = 'block';
   resultEl.style.animation = 'none';
   void resultEl.offsetWidth;
   resultEl.style.animation = '';
 
-  lastResult = { bmi: bmiRounded.toFixed(1), label: label.replace(/\s/g, '') };
-  showToast('计算完成：BMI ' + bmiRounded.toFixed(1) + '，' + lastResult.label);
+  addRecord(height, weight, bmiRounded);
+  showToast('已保存：BMI ' + bmiRounded.toFixed(1) + ' · ' + cat.label);
+}
+
+function bmiToAngle(bmi) {
+  var c = Math.max(14, Math.min(32, bmi));
+  return -90 + (c - 14) / 18 * 180;
+}
+function bmiToArc(bmi) {
+  var c = Math.max(14, Math.min(32, bmi));
+  return ARC_LENGTH * (1 - (c - 14) / 18);
+}
+
+/* ---------- 曲线图 ---------- */
+function switchMode(mode) {
+  chartMode = mode;
+  document.getElementById('tabBmi').classList.toggle('active', mode === 'bmi');
+  document.getElementById('tabWeight').classList.toggle('active', mode === 'weight');
+  renderChart();
+}
+
+function fmtDate(ts) {
+  var d = new Date(ts);
+  return ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+}
+function fmtTime(ts) {
+  var d = new Date(ts);
+  return fmtDate(ts) + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+}
+
+function renderChart() {
+  var list = loadRecords();
+  var wrap = document.getElementById('chartWrap');
+
+  if (list.length === 0) {
+    wrap.innerHTML = '<div class="chart-empty">还没有记录<br>输入身高体重，开始第一次记录吧</div>';
+    return;
+  }
+
+  var W = 344, H = 172;
+  var padL = 42, padR = 14, padT = 14, padB = 30;
+  var plotW = W - padL - padR, plotH = H - padT - padB;
+
+  var isBmi = chartMode === 'bmi';
+  var vals = list.map(function(r) { return isBmi ? r.b : r.w; });
+  var vMin, vMax;
+  if (isBmi) {
+    vMin = 14; vMax = 32;
+  } else {
+    vMin = Math.min.apply(null, vals) - 1.5;
+    vMax = Math.max.apply(null, vals) + 1.5;
+    if (vMax - vMin < 3) { var mid = (vMax + vMin) / 2; vMin = mid - 1.5; vMax = mid + 1.5; }
+  }
+
+  function y(v) { return padT + (1 - (v - vMin) / (vMax - vMin)) * plotH; }
+  function x(i) { return list.length === 1 ? padL + plotW / 2 : padL + i / (list.length - 1) * plotW; }
+
+  var color = isBmi ? '#a78bfa' : '#34d399';
+  var svg = [];
+
+  svg.push('<svg viewBox="0 0 ' + W + ' ' + H + '">');
+  svg.push('<defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0%" stop-color="' + color + '" stop-opacity="0.32"/>' +
+    '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>' +
+    '</linearGradient></defs>');
+
+  // BMI 模式：绿色健康区间带 18.5-24
+  if (isBmi) {
+    var bandTop = y(24), bandBottom = y(18.5);
+    svg.push('<rect x="' + padL + '" y="' + bandTop.toFixed(1) + '" width="' + plotW +
+      '" height="' + (bandBottom - bandTop).toFixed(1) + '" fill="#34d399" opacity="0.1"/>');
+    svg.push('<line x1="' + padL + '" y1="' + bandTop.toFixed(1) + '" x2="' + (padL + plotW) +
+      '" y2="' + bandTop.toFixed(1) + '" stroke="#34d399" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>');
+    svg.push('<line x1="' + padL + '" y1="' + bandBottom.toFixed(1) + '" x2="' + (padL + plotW) +
+      '" y2="' + bandBottom.toFixed(1) + '" stroke="#34d399" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>');
+    svg.push('<text x="' + (padL + plotW) + '" y="' + (bandTop - 4) +
+      '" font-size="9" fill="#34d399" opacity="0.7" text-anchor="end">健康区间 18.5-24</text>');
+  }
+
+  // 网格与 Y 轴标签
+  var gridVals = isBmi ? [14, 23, 32] : [vMin, (vMin + vMax) / 2, vMax];
+  gridVals.forEach(function(v) {
+    var yy = y(v).toFixed(1);
+    svg.push('<line x1="' + padL + '" y1="' + yy + '" x2="' + (padL + plotW) + '" y2="' + yy +
+      '" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>');
+    svg.push('<text x="' + (padL - 8) + '" y="' + (parseFloat(yy) + 3) + '" font-size="9.5" fill="rgba(255,255,255,0.4)" text-anchor="end">' +
+      (isBmi ? v : v.toFixed(1)) + '</text>');
+  });
+
+  if (list.length === 1) {
+    var cx = x(0), cy = y(vals[0]);
+    svg.push('<circle cx="' + cx + '" cy="' + cy.toFixed(1) + '" r="5" fill="' + color + '"/>');
+    svg.push('<text x="' + (padL + plotW / 2) + '" y="' + (padT + plotH / 2) +
+      '" font-size="11" fill="rgba(255,255,255,0.5)" text-anchor="middle">再记录一次即可生成曲线</text>');
+    svg.push('</svg>');
+    wrap.innerHTML = svg.join('');
+    return;
+  }
+
+  // 面积 + 折线
+  var pts = vals.map(function(v, i) { return x(i).toFixed(1) + ',' + y(v).toFixed(1); });
+  svg.push('<path d="M ' + pts.join(' L ') + ' L ' + x(list.length - 1).toFixed(1) + ',' + (padT + plotH) +
+    ' L ' + x(0).toFixed(1) + ',' + (padT + plotH) + ' Z" fill="url(#area)"/>');
+  svg.push('<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color +
+    '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>');
+
+  // 数据点
+  vals.forEach(function(v, i) {
+    var last = i === list.length - 1;
+    svg.push('<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="' + (last ? 5 : 3.2) +
+      '" fill="' + (last ? color : '#fff') + '"' + (last ? '' : ' opacity="0.9"') + '/>');
+  });
+
+  // 最新值标注
+  var lastV = vals[vals.length - 1];
+  svg.push('<text x="' + (x(list.length - 1) - 2) + '" y="' + (y(lastV) - 12) + '" font-size="11" font-weight="700" fill="' +
+    color + '" text-anchor="end">' + lastV.toFixed(1) + '</text>');
+
+  // X 轴日期标签（点少全标，点多标首尾）
+  var n = list.length;
+  var idxs = n <= 8 ? vals.map(function(_, i) { return i; }) : [0, Math.floor((n - 1) / 2), n - 1];
+  idxs.forEach(function(i) {
+    svg.push('<text x="' + x(i).toFixed(1) + '" y="' + (H - 9) + '" font-size="9.5" fill="rgba(255,255,255,0.4)" text-anchor="middle">' +
+      fmtDate(list[i].t) + '</text>');
+  });
+
+  svg.push('</svg>');
+  wrap.innerHTML = svg.join('');
+}
+
+/* ---------- 记录列表 ---------- */
+function renderList() {
+  var list = loadRecords();
+  var box = document.getElementById('recordList');
+  document.getElementById('recCount').textContent = list.length ? '（' + list.length + ' 条）' : '';
+
+  if (list.length === 0) {
+    box.innerHTML = '<div class="empty">暂无记录<br>每次「记录并计算」都会自动保存到这里</div>';
+    return;
+  }
+
+  var html = [];
+  for (var i = list.length - 1; i >= 0; i--) {
+    var r = list[i];
+    var cat = categoryOf(r.b);
+    html.push(
+      '<div class="rec-item">' +
+        '<span class="rec-dot" style="background:' + cat.color + ';color:' + cat.color + '"></span>' +
+        '<div class="rec-main">' +
+          '<div class="rec-line1">BMI ' + r.b.toFixed(1) + '<span class="cat" style="color:' + cat.color + '">' + cat.label + '</span></div>' +
+          '<div class="rec-line2">' + fmtTime(r.t) + ' · ' + r.h + 'cm · ' + r.w + 'kg</div>' +
+        '</div>' +
+        '<button class="rec-del" data-i="' + i + '" aria-label="删除">✕</button>' +
+      '</div>'
+    );
+  }
+  box.innerHTML = html.join('');
+}
+
+// 事件委托：删除单条
+document.getElementById('recordList').addEventListener('click', function(e) {
+  var btn = e.target.closest('.rec-del');
+  if (!btn) return;
+  var list = loadRecords();
+  list.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
+  saveStore(list);
+  renderHistory();
+  showToast('已删除该条记录');
+});
+
+/* ---------- 清空（二次确认） ---------- */
+var clearArmed = false, clearTimer = null;
+function clearAll() {
+  var btn = document.getElementById('clearBtn');
+  if (!clearArmed) {
+    if (loadRecords().length === 0) { showToast('还没有记录可清空'); return; }
+    clearArmed = true;
+    btn.textContent = '确认清空？';
+    btn.classList.add('armed');
+    clearTimer = setTimeout(function() {
+      clearArmed = false;
+      btn.textContent = '清空';
+      btn.classList.remove('armed');
+    }, 3000);
+  } else {
+    clearTimeout(clearTimer);
+    clearArmed = false;
+    btn.textContent = '清空';
+    btn.classList.remove('armed');
+    saveStore([]);
+    renderHistory();
+    showToast('已清空全部记录');
+  }
+}
+
+function renderHistory() {
+  renderChart();
+  renderList();
 }
 
 /* ---------- 分享 ---------- */
 function shareResult() {
-  var title = 'BMI 计算器';
-  var text = '快来测测你的 BMI，看看你的健康状态吧！';
-  if (lastResult) {
-    text = '我的 BMI 是 ' + lastResult.bmi + '，属于「' + lastResult.label + '」，你也来测测吧！';
+  var list = loadRecords();
+  var text = '我在用「BMI 指标追踪器」，记录身高体重、追踪 BMI 变化曲线，快来一起测！';
+  if (list.length > 0) {
+    var last = list[list.length - 1];
+    text = '我的最新 BMI 是 ' + last.b.toFixed(1) + '（' + categoryOf(last.b).label + '），已坚持记录 ' +
+      list.length + ' 次，你也来测测吧！';
   }
 
-  // 优先调用系统/微信内置分享
   if (navigator.share) {
-    navigator.share({ title: title, text: text, url: location.href }).catch(function() {});
+    navigator.share({ title: 'BMI 指标追踪器', text: text, url: location.href }).catch(function() {});
     return;
   }
-  // 降级：复制文案到剪贴板
-  copyText(text + (lastResult ? '' : ''));
+  copyText(text);
   showToast('文案已复制，去微信粘贴给好友吧');
 }
 
@@ -553,6 +877,9 @@ function showToast(msg) {
     if (e.key === 'Enter') calculate();
   });
 });
+
+// 初始化渲染
+renderHistory();
 </script>
 </body>
 </html>
