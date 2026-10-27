@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#17153a">
+<title>BMI 计算器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif;
+    background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a2a6c);
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+    display: flex;
+    justify-content: center;
+    color: #fff;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 手机容器：桌面端居中显示手机宽度，移动端全屏 */
+  .phone {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
+  }
+
+  /* 装饰光斑 */
+  .blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.4; pointer-events: none; }
+  .blob-1 { width: 260px; height: 260px; background: #7f5af0; top: -70px; left: -60px; animation: float1 9s ease-in-out infinite; }
+  .blob-2 { width: 240px; height: 240px; background: #2cb67d; bottom: -60px; right: -50px; animation: float2 11s ease-in-out infinite; }
+  @keyframes float1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(25px,35px) scale(1.1); } }
+  @keyframes float2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,-25px) scale(1.06); } }
+
+  /* ---------- 仿小程序导航栏 ---------- */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px;
+    background: rgba(15, 12, 41, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .nav-back {
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .nav-title {
+    flex: 1;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-right: 84px; /* 与胶囊按钮平衡居中 */
+  }
+  .capsule {
+    position: absolute;
+    right: 12px;
+    top: calc(env(safe-area-inset-top, 0px) + 9px);
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 12px;
+    gap: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .capsule span { font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1; }
+  .capsule i { width: 1px; height: 18px; background: rgba(255,255,255,0.25); }
+  .capsule .dot-target {
+    width: 15px; height: 15px;
+    border: 1.6px solid rgba(255,255,255,0.85);
+    border-radius: 50%;
+    position: relative;
+  }
+  .capsule .dot-target::after {
+    content: '';
+    position: absolute; inset: 2.5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+  }
+
+  /* ---------- 主体 ---------- */
+  main {
+    flex: 1;
+    padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero { text-align: center; margin-bottom: 24px; }
+  .icon-badge {
+    width: 60px; height: 60px;
+    margin: 0 auto 14px;
+    border-radius: 19px;
+    background: linear-gradient(135deg, #7f5af0, #ef4565);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 30px rgba(127, 90, 240, 0.5);
+  }
+  .icon-badge svg { width: 30px; height: 30px; }
+  .hero h1 { font-size: 24px; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; }
+  .hero p { font-size: 13.5px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 22px;
+    padding: 24px 20px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  label svg { width: 15px; height: 15px; opacity: 0.8; }
+  .input-wrap { position: relative; }
+  input {
+    width: 100%;
+    height: 54px;
+    padding: 0 56px 0 18px;
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: 15px;
+    font-size: 18px;
+    color: #fff;
+    background: rgba(255,255,255,0.07);
+    outline: none;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    appearance: none;
+  }
+  input::placeholder { color: rgba(255,255,255,0.3); }
+  input:focus {
+    border-color: #7f5af0;
+    background: rgba(255,255,255,0.11);
+    box-shadow: 0 0 0 4px rgba(127, 90, 240, 0.22);
+  }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .unit {
+    position: absolute; right: 18px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 600;
+  }
+
+  button.btn-primary {
+    width: 100%;
+    height: 54px;
+    border: none;
+    border-radius: 15px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(135deg, #7f5af0 0%, #c86dd7 50%, #ef4565 100%);
+    background-size: 200% 100%;
+    box-shadow: 0 14px 34px rgba(127, 90, 240, 0.45);
+    transition: transform 0.15s, background-position 0.4s;
+    margin-top: 6px;
+  }
+  button.btn-primary:active { transform: scale(0.97); }
+
+  .error {
+    color: #ff8fa3;
+    font-size: 13px;
+    margin-top: 12px;
+    text-align: center;
+    display: none;
+  }
+
+  /* ---------- 结果区 ---------- */
+  .result {
+    margin-top: 24px;
+    display: none;
+    text-align: center;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .gauge-wrap {
+    width: 272px;
+    margin: 0 auto;
+    padding: 10px 14px 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+  }
+  .gauge-inner { position: relative; width: 244px; margin: 0 auto; }
+  .gauge-track, .gauge-arc { fill: none; stroke-linecap: round; }
+  .gauge-track { stroke: rgba(255,255,255,0.09); stroke-width: 14; }
+  .gauge-arc {
+    stroke-width: 14;
+    transition: stroke-dashoffset 1s cubic-bezier(0.25, 1, 0.35, 1), stroke 0.6s;
+  }
+  .needle {
+    position: absolute; left: 50%; bottom: 20px;
+    width: 4px; height: 74px;
+    background: linear-gradient(to top, rgba(255,255,255,0.85), rgba(255,255,255,0.2));
+    border-radius: 4px;
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(-90deg);
+    transition: transform 1s cubic-bezier(0.34, 1.4, 0.64, 1);
+    box-shadow: 0 0 10px rgba(255,255,255,0.35);
+  }
+  .needle::after {
+    content: '';
+    position: absolute; bottom: -9px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 14px rgba(255,255,255,0.5);
+  }
+  .gauge-value {
+    position: absolute; left: 0; right: 0; bottom: -3px;
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  }
+  .gauge-value small { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.45); margin-left: 2px; }
+
+  .bmi-label {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 8px 26px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  .scale-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 16px;
+    padding: 0 4px;
+  }
+  .scale-labels span.active { color: #fff; font-weight: 700; }
+
+  .advice {
+    margin-top: 16px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.75;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 13px 15px;
+    text-align: left;
+  }
+  .advice strong { color: #fff; }
+
+  /* ---------- 分享区 ---------- */
+  .share-area { margin-top: 22px; }
+  .btn-share {
+    width: 100%;
+    height: 54px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    transition: transform 0.15s, background 0.25s;
+  }
+  .btn-share:active { transform: scale(0.97); background: rgba(255,255,255,0.16); }
+  .btn-share svg { width: 19px; height: 19px; }
+  .share-tip {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.7;
+  }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    left: 50%; bottom: 12%;
+    transform: translateX(-50%) translateY(16px);
+    background: rgba(20, 18, 45, 0.92);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 14px;
+    padding: 11px 22px;
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 99;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<div class="phone">
+
+  <!-- 仿小程序导航栏 -->
+  <nav class="navbar">
+    <div class="nav-back">‹</div>
+    <div class="nav-title">BMI 计算器</div>
+    <div class="capsule" onclick="showToast('这是仿小程序的 H5 页面')">
+      <span>•••</span><i></i><span class="dot-target"></span>
+    </div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="icon-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 12l4-3"/>
+          <path d="M12 7v1M17 12h-1M12 17v-1M7 12h1"/>
+        </svg>
+      </div>
+      <h1>BMI 计算器</h1>
+      <p>输入身高体重 · 即时评估健康状态</p>
+    </div>
+
+    <div class="glass-card">
+      <div class="form-group">
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/></svg>
+          身高
+        </label>
+        <div class="input-wrap">
+          <input type="number" id="height" placeholder="例如：170" step="0.1" min="50" max="250" inputmode="decimal">
+          <span class="unit">cm</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 12h5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          体重
+        </label>
+        <div class="input-wrap">
+          <input type="number" id="weight" placeholder="例如：65" step="0.1" min="10" max="300" inputmode="decimal">
+          <span class="unit">kg</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="calculate()">立即计算</button>
+      <p class="error" id="error">请输入有效的身高和体重（身高 50-250cm，体重 10-300kg）</p>
+
+      <div class="result" id="result">
+        <div class="gauge-wrap">
+          <div class="gauge-inner">
+            <svg viewBox="0 0 200 110" width="244" height="134">
+              <path class="gauge-track" d="M 18 100 A 82 82 0 0 1 182 100"/>
+              <path class="gauge-arc" id="arc" d="M 18 100 A 82 82 0 0 1 182 100"/>
+            </svg>
+            <div class="needle" id="needle"></div>
+            <div class="gauge-value"><span id="bmiValue">0.0</span><small>BMI</small></div>
+          </div>
+        </div>
+
+        <div><span class="bmi-label" id="bmiLabel">--</span></div>
+
+        <div class="scale-labels">
+          <span id="tag0">&lt;18.5 偏瘦</span>
+          <span id="tag1">18.5-24 正常</span>
+          <span id="tag2">24-28 超重</span>
+          <span id="tag3">≥28 肥胖</span>
+        </div>
+
+        <p class="advice" id="advice"></p>
+      </div>
+    </div>
+
+    <div class="share-area">
+      <button class="btn-share" onclick="shareResult()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/>
+          <path d="M8.7 10.7l6.6-3.4M8.7 13.3l6.6 3.4"/>
+        </svg>
+        分享给好友
+      </button>
+      <p class="share-tip">通过微信 / 浏览器菜单发送本页给朋友<br>也可以截图分享你的 BMI 报告</p>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var ARC_LENGTH = Math.PI * 82;
+document.getElementById('arc').style.strokeDasharray = ARC_LENGTH;
+document.getElementById('arc').style.strokeDashoffset = ARC_LENGTH;
+
+var lastResult = null; // 记录最近一次计算结果，用于分享文案
+
+// BMI → 指针角度与弧长（14 → 32 线性映射，封顶）
+function bmiToAngle(bmi) {
+  var c = Math.max(14, Math.min(32, bmi));
+  return -90 + (c - 14) / 18 * 180;
+}
+function bmiToArc(bmi) {
+  var c = Math.max(14, Math.min(32, bmi));
+  return ARC_LENGTH * (1 - (c - 14) / 18);
+}
+
+function calculate() {
+  var height = parseFloat(document.getElementById('height').value);
+  var weight = parseFloat(document.getElementById('weight').value);
+  var errorEl = document.getElementById('error');
+  var resultEl = document.getElementById('result');
+
+  if (isNaN(height) || isNaN(weight) || height < 50 || height > 250 || weight < 10 || weight > 300) {
+    errorEl.style.display = 'block';
+    resultEl.style.display = 'none';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  var bmi = weight / Math.pow(height / 100, 2);
+  var bmiRounded = Math.round(bmi * 10) / 10;
+
+  // 分类与配色（中国成人 BMI 标准 WS/T 428-2013）
+  var label, color, tagId, advice;
+  if (bmi < 18.5) {
+    label = '偏 瘦'; color = '#38bdf8'; tagId = 'tag0';
+    advice = '体重偏轻，建议<strong>均衡饮食、适当增加优质蛋白摄入</strong>，并配合力量训练增强体质。';
+  } else if (bmi < 24) {
+    label = '正 常'; color = '#34d399'; tagId = 'tag1';
+    advice = '体重在健康范围内，请<strong>继续保持良好的饮食和运动习惯</strong>。';
+  } else if (bmi < 28) {
+    label = '超 重'; color = '#fbbf24'; tagId = 'tag2';
+    advice = '体重已超出健康范围，建议<strong>控制饮食总热量，增加有氧运动</strong>，如快走、慢跑、游泳等。';
+  } else {
+    label = '肥 胖'; color = '#f87171'; tagId = 'tag3';
+    advice = '属于肥胖范围，健康风险较高，建议<strong>制定科学的减重计划</strong>，必要时咨询医生或营养师。';
+  }
+
+  var arc = document.getElementById('arc');
+  arc.style.stroke = color + 'b3';
+  arc.style.strokeDashoffset = bmiToArc(bmi);
+  document.getElementById('needle').style.transform =
+    'translateX(-50%) rotate(' + bmiToAngle(bmi) + 'deg)';
+  document.getElementById('bmiValue').textContent = bmiRounded.toFixed(1);
+  document.getElementById('bmiValue').style.color = color;
+
+  var bmiLabelEl = document.getElementById('bmiLabel');
+  bmiLabelEl.textContent = label;
+  bmiLabelEl.style.background = 'linear-gradient(135deg, ' + color + 'cc, ' + color + '88)';
+  bmiLabelEl.style.boxShadow = '0 10px 30px ' + color + '55';
+
+  for (var i = 0; i < 4; i++) {
+    document.getElementById('tag' + i).classList.toggle('active', ('tag' + i) === tagId);
+  }
+
+  document.getElementById('advice').innerHTML = advice;
+  resultEl.style.display = 'block';
+  resultEl.style.animation = 'none';
+  void resultEl.offsetWidth;
+  resultEl.style.animation = '';
+
+  lastResult = { bmi: bmiRounded.toFixed(1), label: label.replace(/\s/g, '') };
+  showToast('计算完成：BMI ' + bmiRounded.toFixed(1) + '，' + lastResult.label);
+}
+
+/* ---------- 分享 ---------- */
+function shareResult() {
+  var title = 'BMI 计算器';
+  var text = '快来测测你的 BMI，看看你的健康状态吧！';
+  if (lastResult) {
+    text = '我的 BMI 是 ' + lastResult.bmi + '，属于「' + lastResult.label + '」，你也来测测吧！';
+  }
+
+  // 优先调用系统/微信内置分享
+  if (navigator.share) {
+    navigator.share({ title: title, text: text, url: location.href }).catch(function() {});
+    return;
+  }
+  // 降级：复制文案到剪贴板
+  copyText(text + (lastResult ? '' : ''));
+  showToast('文案已复制，去微信粘贴给好友吧');
+}
+
+function copyText(str) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(str).catch(function() { fallbackCopy(str); });
+  } else {
+    fallbackCopy(str);
+  }
+}
+function fallbackCopy(str) {
+  var ta = document.createElement('textarea');
+  ta.value = str;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+/* ---------- Toast ---------- */
+var toastTimer = null;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2200);
+}
+
+// 回车触发计算
+['height', 'weight'].forEach(function(id) {
+  document.getElementById(id).addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') calculate();
+  });
+});
+</script>
+</body>
+</html>
