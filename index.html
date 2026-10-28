@@ -474,6 +474,137 @@
     line-height: 1.6;
   }
 
+  /* ---------- AI 聊天助手 ---------- */
+  .chat-fab {
+    position: fixed;
+    z-index: 90;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+    cursor: pointer;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1 55%, #a855f7);
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.45);
+    left: 50%; margin-left: 145px;
+    bottom: calc(26px + env(safe-area-inset-bottom));
+    transition: transform 0.2s;
+  }
+  .chat-fab:active { transform: scale(0.92); }
+  .chat-fab svg { width: 24px; height: 24px; }
+  @media (max-width: 480px) {
+    .chat-fab { left: auto; margin-left: 0; right: 16px; }
+  }
+  .chat-mask {
+    position: fixed; inset: 0; z-index: 95;
+    background: rgba(6, 8, 24, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .chat-mask.show { opacity: 1; pointer-events: auto; }
+  .chat-panel {
+    position: fixed; z-index: 96;
+    left: 50%; bottom: 0;
+    transform: translate(-50%, 24px);
+    width: 430px; max-width: 100vw;
+    height: min(72vh, 640px);
+    display: flex; flex-direction: column;
+    background: linear-gradient(160deg, #221c3f 0%, #1b1b34 55%, #26182f 100%);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-bottom: none;
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -18px 50px rgba(0,0,0,0.5);
+    opacity: 0; pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.15), opacity 0.25s;
+  }
+  .chat-panel.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+  .chat-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 16px 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .chat-title {
+    font-size: 15px; font-weight: 700;
+    background: linear-gradient(90deg, #7dd3fc, #c4b5fd);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .chat-close {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer; font-size: 14px;
+  }
+  .chat-msgs {
+    flex: 1; overflow-y: auto;
+    padding: 14px 14px 6px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .msg { display: flex; gap: 8px; max-width: 88%; animation: popIn 0.3s ease; }
+  .msg.ai { align-self: flex-start; }
+  .msg.user { align-self: flex-end; }
+  .msg .avatar {
+    flex: none; width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #fff;
+    background: linear-gradient(135deg, #0ea5e9, #a855f7);
+  }
+  .msg .bubble {
+    padding: 10px 13px;
+    border-radius: 14px;
+    font-size: 13.5px; line-height: 1.75;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .msg.ai .bubble {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.85);
+    border-top-left-radius: 4px;
+  }
+  .msg.user .bubble {
+    background: linear-gradient(135deg, rgba(127,90,240,0.75), rgba(239,69,101,0.6));
+    color: #fff;
+    border-top-right-radius: 4px;
+  }
+  .typing-dot {
+    display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(255,255,255,0.6); margin-right: 4px;
+    animation: blinkDot 1s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.36s; margin-right: 0; }
+  @keyframes blinkDot {
+    0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-3px); }
+  }
+  .chat-input-bar {
+    display: flex; gap: 8px;
+    padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .chat-input-bar input {
+    flex: 1; height: 42px;
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    padding: 0 13px; font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .chat-input-bar input::placeholder { color: rgba(255,255,255,0.3); }
+  .chat-input-bar input:focus { border-color: #0ea5e9; }
+  .chat-send {
+    height: 42px; padding: 0 18px;
+    border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #0ea5e9, #7f5af0);
+    color: #fff; font-size: 14px; font-weight: 700;
+    cursor: pointer;
+  }
+  .chat-send:disabled { opacity: 0.55; cursor: default; }
+
   /* ---------- 分享区 ---------- */
   .share-area { margin-top: 20px; }
   .btn-share {
@@ -652,6 +783,31 @@
       <p class="share-tip">数据仅保存在本机浏览器，不会上传服务器<br>通过微信 / 浏览器菜单把本页发送给朋友</p>
     </div>
   </main>
+</div>
+
+<!-- AI 聊天助手 -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()" aria-label="AI 健康助手">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z"/>
+  </svg>
+</button>
+
+<div class="chat-mask" id="chatMask" onclick="closeChat()"></div>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div class="chat-title">✦ AI 健康助手</div>
+    <button class="chat-close" onclick="closeChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="msg ai">
+      <div class="avatar">✦</div>
+      <div class="bubble">你好！我是 AI 健康助手，关于 BMI、体重管理、饮食运动的问题都可以问我～</div>
+    </div>
+  </div>
+  <div class="chat-input-bar">
+    <input id="chatInput" placeholder="输入你的问题…" onkeydown="if(event.key==='Enter')sendChat()" />
+    <button class="chat-send" onclick="sendChat()">发送</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1067,6 +1223,100 @@ function renderAIReport(text) {
         escHtml(s.b) + '</div></div>';
     }).join('') +
     '</div>';
+}
+
+/* ---------- AI 聊天助手 ---------- */
+var chatHistory = []; // 对话上下文（不含系统提示）
+
+function toggleChat() {
+  var panel = document.getElementById('chatPanel');
+  var mask = document.getElementById('chatMask');
+  var open = panel.classList.toggle('show');
+  mask.classList.toggle('show', open);
+  if (open) {
+    setTimeout(function() { document.getElementById('chatInput').focus(); }, 300);
+    var box = document.getElementById('chatMsgs');
+    box.scrollTop = box.scrollHeight;
+  }
+}
+
+function closeChat() {
+  document.getElementById('chatPanel').classList.remove('show');
+  document.getElementById('chatMask').classList.remove('show');
+}
+
+// 给聊天 AI 的个人数据摘要（读本机记录，仅随提问发送）
+function chatContextSummary() {
+  var list = loadRecords();
+  if (list.length === 0) return '暂无记录。';
+  var last = list[list.length - 1];
+  return '共 ' + list.length + ' 条记录；最新：' + fmtTime(last.t) + '，身高 ' + last.h +
+    'cm，体重 ' + last.w + 'kg，BMI ' + last.b + '（' + categoryOf(last.b).label + '）。';
+}
+
+async function sendChat() {
+  var input = document.getElementById('chatInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var sendBtn = document.querySelector('.chat-send');
+  input.value = '';
+  appendChatMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  var typingEl = showTyping();
+  sendBtn.disabled = true;
+
+  var sys = '你是嵌入在「BMI 指标追踪器」小程序里的 AI 健康助手。请用中文、口语化、友好、简洁地回答用户关于 BMI、体重管理、饮食与运动的问题；单次回答尽量控制在 150 字以内；不诊断疾病，遇到具体医疗问题建议咨询专业医生。用户本机记录摘要：' + chatContextSummary();
+
+  try {
+    var res = await fetch(AI_API, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + AI_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: AI_MODEL,
+        messages: [{ role: 'system', content: sys }].concat(chatHistory.slice(-10)),
+        temperature: 0.7,
+        max_tokens: 500
+      })
+    });
+    if (!res.ok) throw new Error('接口返回 ' + res.status);
+    var data = await res.json();
+    var reply = (data.choices && data.choices[0] && data.choices[0].message &&
+      data.choices[0].message.content || '').trim();
+    if (!reply) throw new Error('模型未返回内容');
+    chatHistory.push({ role: 'assistant', content: reply });
+    typingEl.remove();
+    appendChatMsg('ai', reply);
+  } catch (err) {
+    typingEl.remove();
+    appendChatMsg('ai', '抱歉，我这边网络出了点问题（' + err.message + '），请稍后再试。');
+  } finally {
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+function appendChatMsg(who, text) {
+  var box = document.getElementById('chatMsgs');
+  var div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.innerHTML = (who === 'ai' ? '<div class="avatar">✦</div>' : '') +
+    '<div class="bubble">' + escHtml(text) + '</div>';
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function showTyping() {
+  var box = document.getElementById('chatMsgs');
+  var div = document.createElement('div');
+  div.className = 'msg ai';
+  div.innerHTML = '<div class="avatar">✦</div><div class="bubble">' +
+    '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
 }
 
 /* ---------- 分享 ---------- */
